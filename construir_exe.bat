@@ -59,6 +59,6 @@ exit /b 0
 
 :error
 echo.
-echo OCURRIO UN ERROR. Copia los mensajes de arriba para revisarlos.
+echo OCURRIO UN ERROR. 
 pause
 exit /b 1
