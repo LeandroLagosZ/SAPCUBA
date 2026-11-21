@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sistema de Apertura de Cuentas SAPCUBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f7;--card:#fff;--ink:#12263a;--mut:#5b6b7a;--line:#d8dee4;--acc:#0e7c7b;--acc2:#0a5c5b;--on:#fff;--bad:#b42318;--ok:#067647;--soft:#e4f2f1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1a26;--card:#15263a;--ink:#e8eef3;--mut:#9fb0bf;--line:#2a3d52;--acc:#3fc1bf;--acc2:#7fdcda;--on:#06211f;--bad:#ff8a7a;--ok:#5fd39a;--soft:#17383a}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1a26;--card:#15263a;--ink:#e8eef3;--mut:#9fb0bf;--line:#2a3d52;--acc:#3fc1bf;--acc2:#7fdcda;--on:#06211f;--bad:#ff8a7a;--ok:#5fd39a;--soft:#17383a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;margin:0 0 .4em;letter-spacing:-.01em}
+h1{font-size:1.7rem}h2{font-size:1.25rem}h3{font-size:1rem}
+header{background:var(--ink);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+header b{font-family:"Bricolage Grotesque",sans-serif;font-size:1.05rem;margin-right:auto}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:transparent;color:#cfe0ee;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font:inherit}
+nav button.on,nav button:hover{background:rgba(255,255,255,.14);color:#fff}
+main{max-width:920px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.big{display:block;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;color:var(--ink);font:inherit}
+.big:hover{border-color:var(--acc)}.big b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.05rem}.big span{color:var(--mut);font-size:.9rem}
+button.p,button.s,button.d{font:inherit;font-weight:500;padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+button.p{background:var(--acc);color:var(--on)}button.p:hover{background:var(--acc2)}
+button.s{background:transparent;color:var(--ink);border-color:var(--line)}button.s:hover{border-color:var(--acc)}
+button.d{background:transparent;color:var(--bad);border-color:var(--bad)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button[disabled]{opacity:.5;cursor:not-allowed}
+label{display:block;font-weight:500;margin:10px 0 4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+input[type=checkbox],input[type=radio]{width:auto}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center}.sp{margin-left:auto}
+.steps{display:flex;gap:6px;margin-bottom:16px}.steps div{flex:1;padding:8px;border-bottom:3px solid var(--line);color:var(--mut);font-size:.85rem}.steps div.on{border-color:var(--acc);color:var(--ink);font-weight:600}.steps div.done{border-color:var(--ok)}
+.opt{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;margin-bottom:8px}.opt.sel{border-color:var(--acc);background:var(--soft)}
+.err{color:var(--bad);font-size:.88rem;margin-top:4px}.hint{color:var(--mut);font-size:.85rem}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.78rem;font-weight:600}.on-t{background:var(--soft);color:var(--ok)}.off-t{background:rgba(180,35,24,.12);color:var(--bad)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+.k{font-family:"IBM Plex Sans",monospace;letter-spacing:.02em}
+.stat{font-family:"Bricolage Grotesque",sans-serif;font-size:1.8rem;font-weight:700}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;display:none;max-width:90%;z-index:20}
+</style>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header><div class="brand"><span class="logo">SC</span><div><b>SAPCUBA</b><small>Sistema de Apertura de Cuentas</small></div></div><div id="usr"></div><nav id="nav"></nav></header>
+<main id="app"></main>
+<div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+const NOM=["Juan José","María Elena","Luis Alberto","Rosa Isabel","Carlos Andrés","Ana Lucía","Pedro Pablo","Sofía Alejandra"],APE=["Pérez","Gómez","Quispe","Huamán","Mamani","Flores","Ramos","Condori"];
+const CAT={dep:{1:"Arequipa",2:"Lima",3:"Cusco",4:"Puno"},prov:[[1,1,"Arequipa"],[2,1,"Camaná"],[3,2,"Lima"],[4,3,"Cusco"],[5,4,"San Román"]],
+mon:[{c:"PEN",n:"Soles",s:"S/"},{c:"USD",n:"Dólares",s:"$"}],ocu:["Dependiente","Independiente","Otros"]};
+const seedDB=()=>({n:3,ag:[{c:1,n:"Agencia Cercado",p:1,e:1},{c:2,n:"Agencia Camaná",p:2,e:1},{c:3,n:"Agencia Miraflores",p:3,e:1},{c:4,n:"Agencia Cusco Centro",p:4,e:1},{c:5,n:"Agencia Juliaca",p:5,e:0}],
+cli:[{cod:1001,dni:"60967097",nom:"Juan José Pérez Gómez",nombres:"Juan José",ap:"Pérez",am:"Gómez",nac:"1998-02-26",mail:"juan@gmail.com",tel:["999888777"],ocu:"Dependiente",prov:1,e:1},{cod:1002,dni:"45120388",nom:"Rosa Isabel Quispe Mamani",nombres:"Rosa Isabel",ap:"Quispe",am:"Mamani",nac:"1985-07-14",mail:"rosa@gmail.com",tel:["987654321","912345678"],ocu:"Independiente",prov:1,e:1}],
+cta:[{num:"00110000000000000001",cci:"00211000000000000001",con:16451,tasa:3.5,sal:20.2,e:1,dni:"60967097",mon:"PEN",ag:1},{num:"00110000000000000002",cci:"00211000000000000002",con:16452,tasa:3.5,sal:150,e:1,dni:"60967097",mon:"USD",ag:1},{num:"00110000000000000003",cci:"00211000000000000003",con:16453,tasa:3.5,sal:980.5,e:1,dni:"45120388",mon:"PEN",ag:3}],
+tar:[{num:"4111111111111111",cvv:"456",e:1,em:"2026-02-26",ve:"2030-05-30",mar:"Visa",cta:"00110000000000000001"},{num:"4111111111111112",cvv:"123",e:0,em:"2025-01-10",ve:"2029-01-10",mar:"Visa",cta:"00110000000000000002"},{num:"5111111111111113",cvv:"789",e:1,em:"2026-03-01",ve:"2030-03-01",mar:"Mastercard",cta:"00110000000000000003"}],bk:[]});
+let db;try{db=JSON.parse(localStorage.getItem("apertura_db"))}catch(e){}db=db||seedDB();
+const save=()=>{try{localStorage.setItem("apertura_db",JSON.stringify(db))}catch(e){}};
+const blank=()=>({dni:"",emi:"",tel:"",mail:"",nac:false,calle:"",cdep:"",cprov:"",nom:"",nomb:"",ap:"",am:"",fnac:"",ok:false,mon:"PEN",ocu:"Dependiente",dep:"",prov:"",ag:"",tar:true,err:{}});
+let S={tot:{c:0,a:0,t:0},view:"home",step:1,f:blank(),res:null,q:"",found:null,rep:null,snap:null};
+const rnd=n=>Array.from({length:n},()=>Math.floor(Math.random()*10)).join("");
+const money=(v,m)=>(m=="USD"?"$ ":"S/ ")+Number(v).toFixed(2);
+const toast=t=>{const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2600)};
+const tag=e=>`<span class="tag ${e?"on-t":"off-t"}">${e?"Activa":"Inactiva"}</span>`;
+const cliBy=d=>db.cli.find(c=>c.dni==d);
+const provN=p=>(CAT.prov.find(x=>x[0]==p)||[])[2]||"";
+const depOf=p=>(CAT.prov.find(x=>x[0]==p)||[])[1];
+
+function nav(){const t=[["home","Inicio"],["open","Nueva apertura"],["acc","Cuentas del cliente"],["rep","Reportes"],["adm","Administración"]];
+$("#nav").innerHTML=t.map(([v,l])=>`<button data-act="go" data-v="${v}" class="${S.view==v?"on":""}">${l}</button>`).join("")}
+
+const V={
+home(){const a=S.tot.a,t=S.tot.t;return`<h1>Panel del trabajador de agencia</h1><p class="hint">Elige una acción. Los datos se guardan en la base de datos PostgreSQL de SAPCUBA.</p>
+<div class="grid" style="margin:16px 0">
+<button class="big" data-act="nueva"><b>Abrir cuenta de ahorros</b><span>Formulario de 4 pasos con validación RENIEC simulada</span></button>
+<button class="big" data-act="go" data-v="acc"><b>Buscar cliente por DNI</b><span>Ver cuentas, tarjetas y teléfonos</span></button>
+<button class="big" data-act="go" data-v="rep"><b>Reportes</b><span>Las consultas del script SQL, con un clic</span></button>
+<button class="big" data-act="go" data-v="adm"><b>Administración</b><span>Respaldos, restauración y agencias</span></button></div>
+<div class="grid"><div class="card"><div class="stat">${S.tot.c}</div>clientes</div><div class="card"><div class="stat">${a}</div>cuentas</div><div class="card"><div class="stat">${t}</div>tarjetas activas</div></div>`},
+
+open(){const f=S.f,e=f.err,st=["Datos personales","Moneda","Ocupación y agencia","Confirmación"];
+let h=`<h1>Nueva apertura de Cuenta de Ahorros Movible</h1><div class="steps">${st.map((s,i)=>`<div class="${S.step==i+1?"on":S.step>i+1?"done":""}">${i+1}. ${s}</div>`).join("")}</div><div class="card">`;
+if(S.step==1)h+=`<div class="row"><div><label>DNI</label><input data-f="dni" inputmode="numeric" maxlength="8" value="${f.dni}" placeholder="8 dígitos">${e.dni?`<div class="err">${e.dni}</div>`:""}</div>
+<div><label>Fecha de emisión del DNI</label><input type="date" data-f="emi" value="${f.emi}">${e.emi?`<div class="err">${e.emi}</div>`:""}</div>
+<div><label>Teléfono</label><input data-f="tel" inputmode="numeric" maxlength="9" value="${f.tel}" placeholder="999888777">${e.tel?`<div class="err">${e.tel}</div>`:""}</div>
+<div><label>Correo electrónico</label><input data-f="mail" type="email" value="${f.mail}" placeholder="nombre@correo.com">${e.mail?`<div class="err">${e.mail}</div>`:""}</div></div>
+<div class="row"><div><label>Departamento de residencia</label><select data-f="cdep"><option value="">Elegir</option>${Object.entries(CAT.dep).map(([k,v])=>`<option value="${k}" ${f.cdep==k?"selected":""}>${v}</option>`).join("")}</select>${e.cdep?`<div class="err">${e.cdep}</div>`:""}</div>
+<div><label>Provincia de residencia</label><select data-f="cprov" ${f.cdep?"":"disabled"}><option value="">Elegir</option>${CAT.prov.filter(p=>p[1]==f.cdep).map(p=>`<option value="${p[0]}" ${f.cprov==p[0]?"selected":""}>${p[2]}</option>`).join("")}</select>${e.cprov?`<div class="err">${e.cprov}</div>`:""}</div>
+<div><label>Calle y número</label><input data-f="calle" maxlength="100" value="${esc(f.calle)}" placeholder="Av. / Calle / Jr. y número">${e.calle?`<div class="err">${e.calle}</div>`:""}</div></div>
+<label class="opt" style="margin-top:14px"><input type="checkbox" data-f="nac" ${f.nac?"checked":""}> Soy de nacionalidad peruana, con domicilio y residencia física en Perú</label>${e.nac?`<div class="err">${e.nac}</div>`:""}
+<div class="bar"><button class="s" data-act="reniec">Validar DNI con RENIEC</button>${f.ok?`<span class="tag on-t">Validado</span>`:""}</div>
+${f.ok?`<div class="card" style="background:var(--soft);margin:12px 0 0"><b>${esc(f.nom)}</b><br><span class="hint">Nombres: ${esc(f.nomb)} · Apellido paterno: ${esc(f.ap)} · Apellido materno: ${esc(f.am)}</span><br><span class="hint">Fecha de nacimiento: ${f.fnac}</span></div>`:""}`;
+if(S.step==2)h+=CAT.mon.map(m=>`<label class="opt ${f.mon==m.c?"sel":""}"><input type="radio" name="mon" data-f="mon" value="${m.c}" ${f.mon==m.c?"checked":""}><div><b>Cuenta en ${m.n}</b><br><span class="hint">${m.c} · símbolo ${m.s}</span></div></label>`).join("");
+if(S.step==3){const ps=CAT.prov.filter(p=>p[1]==f.dep),ags=db.ag.filter(a=>a.p==f.prov&&a.e);
+h+=`<div class="row"><div><label>Ocupación</label><select data-f="ocu">${CAT.ocu.map(o=>`<option ${f.ocu==o?"selected":""}>${o}</option>`).join("")}</select></div>
+<div><label>Departamento de la agencia</label><select data-f="dep"><option value="">Elegir</option>${Object.entries(CAT.dep).map(([k,v])=>`<option value="${k}" ${f.dep==k?"selected":""}>${v}</option>`).join("")}</select></div>
+<div><label>Provincia de la agencia</label><select data-f="prov" ${f.dep?"":"disabled"}><option value="">Elegir</option>${ps.map(p=>`<option value="${p[0]}" ${f.prov==p[0]?"selected":""}>${p[2]}</option>`).join("")}</select></div>
+<div><label>Agencia</label><select data-f="ag" ${f.prov?"":"disabled"}><option value="">Elegir</option>${ags.map(a=>`<option value="${a.c}" ${f.ag==a.c?"selected":""}>${a.n}</option>`).join("")}</select></div></div>
+${f.prov&&!ags.length?`<div class="err">No hay agencias activas en esa provincia.</div>`:""}${e.ag?`<div class="err">${e.ag}</div>`:""}`}
+if(S.step==4){const a=db.ag.find(x=>x.c==f.ag);h+=`<h2>Revisa antes de confirmar</h2><table><tr><th>DNI</th><td>${f.dni}</td></tr><tr><th>Titular</th><td>${f.nom}</td></tr><tr><th>Teléfono</th><td>${f.tel}</td></tr><tr><th>Correo</th><td>${f.mail}</td></tr><tr><th>Dirección</th><td>${esc(f.calle)}, ${provN(f.cprov)}</td></tr><tr><th>Moneda</th><td>${f.mon}</td></tr><tr><th>Ocupación</th><td>${f.ocu}</td></tr><tr><th>Agencia</th><td>${a?a.n:""}</td></tr></table>
+<label class="opt" style="margin-top:12px"><input type="checkbox" data-f="tar" ${f.tar?"checked":""}> Emitir tarjeta de débito con la cuenta</label><p class="hint">Se guardan cliente, teléfono, cuenta y tarjeta como una sola operación.</p>`}
+h+=`<div class="bar"><button class="s" data-act="${S.step==1?"go":"back"}" data-v="home">${S.step==1?"Cancelar":"Atrás"}</button><span class="sp"></span>${S.step<4?`<button class="p" data-act="next">Siguiente</button>`:`<button class="p" data-act="confirm">Confirmar apertura</button>`}</div></div>`;return h},
+
+done(){const r=S.res;return`<div class="card"><h1>Cuenta abierta</h1><p>Titular: <b>${r.nom}</b></p><table><tr><th>Número de cuenta</th><td class="k">${r.cta.num}</td></tr><tr><th>CCI</th><td class="k">${r.cta.cci}</td></tr><tr><th>N.º de contrato</th><td>${r.cta.con}</td></tr><tr><th>Tasa de interés</th><td>${r.cta.tasa}%</td></tr>${r.tar?`<tr><th>Tarjeta</th><td class="k">${r.tar.num} · ${r.tar.mar} · vence ${r.tar.ve}</td></tr>`:""}</table>
+<div class="bar"><button class="s" data-act="copy">Copiar datos de la cuenta</button><button class="s" data-act="verc">Ver cuentas del cliente</button><span class="sp"></span><button class="p" data-act="nueva">Abrir otra cuenta</button></div></div>`},
+
+acc(){let h=`<h1>Cuentas del cliente</h1><div class="card"><label>DNI del cliente</label><div class="bar" style="margin:0"><input id="q" style="flex:1;min-width:160px" inputmode="numeric" maxlength="8" value="${S.q}" placeholder="Ej. 60967097"><button class="p" data-act="buscar">Buscar</button></div><p class="hint">Prueba con 60967097 o 45120388.</p></div>`;
+if(S.found===false)return h+`<div class="card">No hay un cliente con ese DNI. <button class="s" data-act="nueva">Abrir su primera cuenta</button></div>`;
+if(!S.found)return h;const c=cliBy(S.found);
+h+=`<div class="card"><h2>${c.nom}</h2><p class="hint">DNI ${c.dni} · ${c.mail} · ${c.ocu} · ${c.calle?esc(c.calle)+", ":""}${provN(c.prov)}</p><p>Teléfonos: ${c.tel.map(t=>`<span class="tag on-t">${t}</span>`).join(" ")}</p>
+<div class="bar" style="margin-top:0"><input id="nt" style="max-width:180px" inputmode="numeric" maxlength="9" placeholder="Nuevo teléfono"><button class="s" data-act="addtel">Agregar teléfono</button><span class="sp"></span><button class="p" data-act="nuevaCta">Abrir otra cuenta</button></div></div>`;
+db.cta.filter(a=>a.dni==c.dni).forEach(a=>{const ts=db.tar.filter(t=>t.cta==a.num);
+h+=`<div class="card"><div class="bar" style="margin:0 0 8px"><h3 style="margin:0">Cuenta en ${a.mon} · ${money(a.sal,a.mon)}</h3>${tag(a.e)}<span class="sp"></span><button class="s" data-act="tglcta" data-id="${a.num}">${a.e?"Desactivar cuenta":"Activar cuenta"}</button></div>
+<p class="hint k">N.º ${a.num} · CCI ${a.cci} · ${db.ag.find(x=>x.c==a.ag).n}</p>
+<div class="tw"><table><tr><th>Tarjeta</th><th>Marca</th><th>Vence</th><th>Estado</th><th></th></tr>${ts.map(t=>`<tr><td class="k">${t.num}</td><td>${t.mar}</td><td>${t.ve}</td><td>${tag(t.e)}</td><td>${t.e?`<button class="d" data-act="perdida" data-id="${t.num}">Reportar pérdida y emitir réplica</button>`:""}</td></tr>`).join("")||`<tr><td colspan="5" class="hint">Sin tarjetas.</td></tr>`}</table></div>
+<div class="bar"><button class="s" data-act="emitir" data-id="${a.num}">Emitir tarjeta nueva</button></div></div>`});return h},
+
+rep(){const R=(S.reps||[]).map(x=>[x.k,x.t]);
+return`<h1>Reportes</h1><div class="bar" style="margin:0 0 16px">${R.map(([k,l])=>`<button class="${S.rep==k?"p":"s"}" data-act="report" data-k="${k}">${l}</button>`).join("")}</div>${S.rep?`<div class="card tw">${repTable(S.rep)}</div>`:`<p class="hint">Elige un reporte para ejecutar la consulta.</p>`}`},
+
+adm(){return`<h1>Administración</h1>
+<div class="card"><h2>Agencias</h2><div class="tw"><table><tr><th>Agencia</th><th>Provincia</th><th>Estado</th><th></th></tr>${db.ag.map(a=>`<tr><td>${a.n}</td><td>${provN(a.p)}</td><td>${tag(a.e)}</td><td><button class="s" data-act="tglag" data-id="${a.c}">${a.e?"Desactivar":"Activar"}</button></td></tr>`).join("")}</table></div></div>`}
+};
+
+function repTable(k){let H,rows;
+if(k=="cuentas"){H=["Cliente","DNI","N.º de cuenta","Moneda","Saldo"];rows=db.cta.map(a=>[cliBy(a.dni).nom,a.dni,a.num,a.mon,money(a.sal,a.mon)])}
+if(k=="moneda"){H=["Moneda","Cuentas","Saldo total"];rows=CAT.mon.map(m=>{const x=db.cta.filter(a=>a.mon==m.c);return[m.n,x.length,money(x.reduce((s,a)=>s+a.sal,0),m.c)]})}
+if(k=="agencia"){H=["Departamento","Agencia","Cuentas"];rows=db.ag.map(a=>[CAT.dep[depOf(a.p)],a.n,db.cta.filter(c=>c.ag==a.c).length])}
+if(k=="varias"){H=["Cliente","DNI","Total de cuentas"];rows=db.cli.map(c=>[c.nom,c.dni,db.cta.filter(a=>a.dni==c.dni).length]).filter(r=>r[2]>1)}
+if(k=="inact"){H=["Tarjeta","Cuenta","Emitida","Vence"];rows=db.tar.filter(t=>!t.e).map(t=>[t.num,t.cta,t.em,t.ve])}
+return`<table><tr>${H.map(x=>`<th>${x}</th>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")||`<tr><td class="hint" colspan="${H.length}">Sin resultados.</td></tr>`}</table>`}
+
+function draw(){nav();$("#app").innerHTML=V[S.view]();window.scrollTo(0,0)}
+function emitCard(cta){const d=new Date(),v=new Date();v.setFullYear(d.getFullYear()+4);const t={num:(Math.random()<.5?"4":"5")+rnd(15),cvv:rnd(3),e:1,em:d.toISOString().slice(0,10),ve:v.toISOString().slice(0,10),mar:"Visa",cta};db.tar.push(t);return t}
+function mkCta(dni,mon,ag){const a={num:"001"+rnd(17),cci:"002"+rnd(17),con:16000+Math.floor(Math.random()*9000),tasa:3.5,sal:0,e:1,dni,mon,ag:+ag};db.cta.push(a);return a}
+function validate(){const f=S.f,e={};
+if(S.step==1){if(!/^\d{8}$/.test(f.dni))e.dni="El DNI debe tener exactamente 8 dígitos.";if(!f.emi)e.emi="Indica la fecha de emisión del DNI.";if(!/^\d{9}$/.test(f.tel))e.tel="El teléfono debe tener 9 dígitos.";if(!/^\S+@\S+\.\S+$/.test(f.mail))e.mail="Escribe un correo válido.";if(!f.nac)e.nac="Es requisito ser peruano con residencia en Perú.";if(!f.ok&&!e.dni)e.dni="Valida el DNI con RENIEC antes de continuar.";if(!f.cdep)e.cdep="Elige el departamento de residencia.";if(!f.cprov)e.cprov="Elige la provincia de residencia.";if(!(f.calle||"").trim())e.calle="Escribe la calle y el número del domicilio."}
+if(S.step==3&&!f.ag)e.ag="Elige una agencia activa.";f.err=e;return!Object.keys(e).length}
+
+const A={
+go(el){S.view=el.dataset.v;if(S.view=="acc"){S.found=null;S.q=""}draw()},
+nueva(){S.f=blank();S.step=1;S.view="open";draw()},
+next(){if(validate()){S.step++;draw()}else draw()},back(){S.step--;draw()},
+reniec(){const f=S.f;if(!/^\d{8}$/.test(f.dni)){f.err={dni:"Escribe un DNI de 8 dígitos para validar."};return draw()}
+const c=cliBy(f.dni),n=+f.dni.slice(-2);if(c){f.nomb=c.nombres;f.ap=c.ap;f.am=c.am;f.nom=c.nom}else{f.nomb=NOM[n%8];f.ap=APE[n%8];f.am=APE[(n+3)%8];f.nom=`${f.nomb} ${f.ap} ${f.am}`}f.fnac=c?c.nac:`${1975+n%30}-0${1+n%9}-1${n%9}`;f.ok=true;f.err={};draw();toast("DNI validado (simulación de RENIEC)")},
+confirm(){const f=S.f;let c=cliBy(f.dni);if(!c){c={cod:1000+(++db.n),dni:f.dni,nom:f.nom,nombres:f.nomb,ap:f.ap,am:f.am,nac:f.fnac,mail:f.mail,tel:[f.tel],ocu:f.ocu,prov:+f.cprov,calle:f.calle,emi:f.emi,per:f.nac,e:1};db.cli.push(c)}else if(!c.tel.includes(f.tel))c.tel.push(f.tel);
+const cta=mkCta(f.dni,f.mon,f.ag),tar=f.tar?emitCard(cta.num):null;save();S.res={nom:c.nom,cta,tar,dni:c.dni};S.view="done";draw();toast("Apertura guardada")},
+copy(){const r=S.res,t=`Cuenta ${r.cta.num} | CCI ${r.cta.cci} | Contrato ${r.cta.con}`;try{navigator.clipboard.writeText(t).then(()=>toast("Copiado"),()=>toast(t))}catch(e){toast(t)}},
+verc(){S.q=S.res.dni;S.found=S.res.dni;S.view="acc";draw()},
+buscar(){const q=$("#q").value.trim();S.q=q;S.found=cliBy(q)?q:false;draw()},
+addtel(){const t=$("#nt").value.trim(),c=cliBy(S.found);if(!/^\d{9}$/.test(t))return toast("El teléfono debe tener 9 dígitos");if(c.tel.includes(t))return toast("Ese teléfono ya está registrado");c.tel.push(t);save();draw();toast("Teléfono agregado")},
+nuevaCta(){const c=cliBy(S.found);S.f=blank();Object.assign(S.f,{dni:c.dni,nom:c.nom,nomb:c.nombres,ap:c.ap,am:c.am,fnac:c.nac,mail:c.mail,tel:c.tel[0],emi:c.emi,nac:c.per,calle:c.calle,cprov:c.prov,cdep:(CAT.prov.find(p=>p[0]==c.prov)||[])[1],ok:true});S.step=2;S.view="open";draw()},
+tglcta(el){const a=db.cta.find(x=>x.num==el.dataset.id);a.e=a.e?0:1;save();draw();toast(a.e?"Cuenta activada":"Cuenta desactivada")},
+perdida(el){const t=db.tar.find(x=>x.num==el.dataset.id);if(!confirm("¿Marcar esta tarjeta como perdida y emitir una réplica?"))return;t.e=0;emitCard(t.cta);save();draw();toast("Tarjeta inactivada y réplica emitida")},
+emitir(el){emitCard(el.dataset.id);save();draw();toast("Tarjeta emitida")},
+report(el){S.rep=el.dataset.k;draw()},
+backup(){const r=db.cli.length+db.cta.length+db.tar.length+db.ag.length,s=JSON.stringify(db);S.snap=s;db.bk.push({f:new Date().toLocaleString("es-PE"),kb:Math.max(1,Math.round(s.length/1024)),r,s});save();draw();toast("Respaldo generado")},
+restore(){const b=db.bk[db.bk.length-1];if(!b||!confirm("Se reemplazarán los datos actuales por el último respaldo. ¿Continuar?"))return;const bk=db.bk;db=JSON.parse(b.s);db.bk=bk;save();draw();toast("Datos restaurados")},
+reset(){if(!confirm("Se borrarán los cambios y los respaldos. ¿Continuar?"))return;db=seedDB();save();draw();toast("Datos de prueba restaurados")},
+tglag(el){const a=db.ag.find(x=>x.c==el.dataset.id);a.e=a.e?0:1;save();draw();toast(a.e?"Agencia activada":"Agencia desactivada")}
+};
+document.addEventListener("click",e=>{const el=e.target.closest("[data-act]");if(el&&A[el.dataset.act])A[el.dataset.act](el)});
+document.addEventListener("input",e=>{const k=e.target.dataset.f;if(!k)return;const f=S.f;f[k]=e.target.type=="checkbox"?e.target.checked:e.target.value;if(k=="dni"||k=="emi")f.ok=f.ok&&k!="dni"}) ;
+document.addEventListener("change",e=>{const k=e.target.dataset.f;if(!k)return;if(k=="cdep")S.f.cprov="";if(k=="dep"){S.f.prov="";S.f.ag=""}if(k=="prov")S.f.ag="";if(["cdep","dep","prov","mon"].includes(k))draw()});
+draw();
+</script>
+<script src="auth.js"></script>
+<script src="api.js"></script>
+<script src="crud.js"></script>
+</body>
+</html>

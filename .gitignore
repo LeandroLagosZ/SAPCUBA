@@ -1,0 +1,11 @@
+.venv/
+.venv-build/
+backend/.env
+__pycache__/
+build/
+dist/
+salida/
+*.spec
+pginstall/
+pgserver.libs/
+backups/
