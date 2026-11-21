@@ -1,7 +1,7 @@
 # SAPCUBA · Sistema de Apertura de Cuentas
 
-Aplicación de escritorio para Windows: **un solo archivo `SAPCUBA.exe`**. Doble clic y listo: no hay que instalar PostgreSQL, Python ni Docker.
-Por dentro usa **PostgreSQL 16 (incluido) + servidor HTTP de Python (librería estándar, sin frameworks) + HTML/JS**.
+Aplicación de escritorio para Windows: **un solo archivo `SAPCUBA.exe`**. Doble clic y listo.
+Por dentro usa **PostgreSQL 16 (incluido) + servidor HTTP de Python (librería estándar) + HTML/JS**.
 
 ## Usar SAPCUBA.exe
 1. Doble clic en `SAPCUBA.exe`. Aparece una ventana de espera ("Iniciando…"); la **primera vez** tarda cerca de un minuto porque crea la base de datos. Después abre en unos segundos.
